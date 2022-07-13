@@ -34,9 +34,6 @@ const Key: FC<{ scale: number, keyCode: string }> = ({ scale, keyCode }) => {
   const [play, setPlay] = useState(false)
   const audioCtx = useAudioContext()
   const oscillatorRef = useRef<OscillatorNode>()
-  // const play = useMemo(() => {
-  //   return !!oscillatorRef.current
-  // }, [oscillatorRef.current])
   const start = () => {
     if (!audioCtx || oscillatorRef.current) {
       return
@@ -53,8 +50,8 @@ const Key: FC<{ scale: number, keyCode: string }> = ({ scale, keyCode }) => {
     if (!audioCtx) {
       return
     }
-    oscillatorRef.current!.stop(audioCtx.currentTime)
-    oscillatorRef.current!.disconnect()
+    oscillatorRef.current?.stop(audioCtx.currentTime)
+    oscillatorRef.current?.disconnect()
     oscillatorRef.current = undefined
     setPlay(false)
   }
@@ -78,7 +75,7 @@ const Key: FC<{ scale: number, keyCode: string }> = ({ scale, keyCode }) => {
     <Button
       colorScheme={play ? "blue" : "green"}
       onMouseDown={() => start()} onMouseUp={() => stop()} onMouseLeave={() => stop()}>
-      🎼
+      {keyCode}
     </Button>
   </Box>
 }
