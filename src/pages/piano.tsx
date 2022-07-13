@@ -1,6 +1,6 @@
 import Head from 'next/head'
-import { Box, Button, Center, Stack } from '@chakra-ui/react'
-import React, { useEffect, useState } from 'react'
+import { Box, Button, Center, HStack, Stack } from '@chakra-ui/react'
+import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
 import { AudioProvider, useAudioContext } from '../component/AudioCtx'
 
 
@@ -17,6 +17,70 @@ const playReadySound = (onPlayEnd: () => void) => {
   oscillator.start(0)
   oscillator.stop(0.001)
 
+}
+
+const scales = [
+  ["a", 523.23],//ド	
+  ["s", 587.34],//レ	
+  ["d", 659.25],//ミ	
+  ["f", 698.45],//ファ
+  ["g", 783.98],//ソ	
+  ["h", 879.99],//ラ	
+  ["j", 987.75],//シ	
+  ["k", 1046.5],//ド	 
+]
+
+const Key: FC<{ scale: number, keyCode: string }> = ({ scale, keyCode }) => {
+  const [play, setPlay] = useState(false)
+  const audioCtx = useAudioContext()
+  const oscillatorRef = useRef<OscillatorNode>()
+  // const play = useMemo(() => {
+  //   return !!oscillatorRef.current
+  // }, [oscillatorRef.current])
+  const start = () => {
+    if (!audioCtx || oscillatorRef.current) {
+      return
+    }
+    const oscillator = audioCtx.createOscillator()
+    oscillator.type = 'triangle'
+    oscillator.frequency.setValueAtTime(scale, audioCtx.currentTime)
+    oscillator.connect(audioCtx.destination)
+    oscillatorRef.current = oscillator
+    setPlay(true)
+    oscillator.start(audioCtx.currentTime)
+  }
+  const stop = () => {
+    if (!audioCtx) {
+      return
+    }
+    oscillatorRef.current!.stop(audioCtx.currentTime)
+    oscillatorRef.current!.disconnect()
+    oscillatorRef.current = undefined
+    setPlay(false)
+  }
+  useEffect(() => {
+    const onKeyDown = (ev: KeyboardEvent) => {
+      if (ev.key === keyCode) { start() }
+    }
+    const onKeyUp = (ev: KeyboardEvent) => {
+      if (ev.key === keyCode) { stop() }
+    }
+    document.addEventListener("keydown", onKeyDown)
+    document.addEventListener("keyup", onKeyUp)
+    return () => {
+      document.removeEventListener("keydown", onKeyDown)
+      document.removeEventListener("keyup", onKeyUp)
+    }
+  }, [])
+
+
+  return <Box>
+    <Button
+      colorScheme={play ? "blue" : "green"}
+      onMouseDown={() => start()} onMouseUp={() => stop()} onMouseLeave={() => stop()}>
+      🎼
+    </Button>
+  </Box>
 }
 const SoundButton = () => {
   const [ready, setReady] = useState(false)
@@ -42,32 +106,16 @@ const SoundButton = () => {
     })
   }
 
-  const onPress = () => {
-    // const audioCtx = new window.AudioContext()
-    if (!audioCtx) {
-      return
-    }
-
-    const oscillator = audioCtx.createOscillator()
-    oscillator.type = 'triangle'
-    oscillator.frequency.setValueAtTime(1200, audioCtx.currentTime)
-    oscillator.frequency.setValueAtTime(800, audioCtx.currentTime + 0.1)
-    oscillator.connect(audioCtx.destination)
-
-    oscillator.start(audioCtx.currentTime)
-    oscillator.stop(audioCtx.currentTime + 0.2)
-  }
   if (!ready) {
     return <Button onClick={() => onSetup()}>
       Setup
     </Button>
   }
-  return <Stack>
-    <Box>{state}</Box>
-    <Button onClick={() => { onPress() }} colorScheme={"teal"}>
-      beep
-    </Button>
-  </Stack>
+  return <HStack>
+    {scales.map(([keyCode, scale]) => {
+      return <Key key={keyCode} keyCode={keyCode} scale={scale} />
+    })}
+  </HStack>
 }
 
 export default function Home() {
