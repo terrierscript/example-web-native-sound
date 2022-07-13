@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import { Box, Button, Center, Stack } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
-import { useAudioContext } from '../component/AudioCtx'
+import { AudioProvider, useAudioContext } from '../component/AudioCtx'
 
 
 const playReadySound = (onPlayEnd: () => void) => {
@@ -21,12 +21,27 @@ const playReadySound = (onPlayEnd: () => void) => {
 const SoundButton = () => {
   const [ready, setReady] = useState(false)
   const [state, setState] = useState("none")
+  const audioCtx = useAudioContext()
 
+  console.log(audioCtx)
+  useEffect(() => {
+    if (!audioCtx) {
+      return
+    }
+    const listener = (event: Event) => {
+      setState(audioCtx.state)
+    }
+    audioCtx.addEventListener("statechange", listener)
+    return () => {
+      audioCtx.removeEventListener("statechange", listener)
+    }
+  }, [audioCtx])
   const onSetup = () => {
     playReadySound(() => {
       setReady(true)
     })
   }
+
   const onPress = () => {
     const audioCtx = new window.AudioContext()
 
@@ -60,9 +75,11 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Box>
-        <Center flex={1} p={10}>
-          <SoundButton />
-        </Center>
+        <AudioProvider>
+          <Center flex={1} p={10}>
+            <SoundButton />
+          </Center>
+        </AudioProvider>
       </Box>
     </Box>
   )
