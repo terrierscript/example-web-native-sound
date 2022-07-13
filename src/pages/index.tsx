@@ -44,11 +44,11 @@ const SoundButton = () => {
     oscillator.start(audioCtx.currentTime)
     oscillator.stop(audioCtx.currentTime + 0.2)
   }
-  if (!ready) {
-    return <Button onClick={() => onSetup()}>
-      Setup
-    </Button>
-  }
+  // if (!ready) {
+  //   return <Button onClick={() => onSetup()}>
+  //     Setup
+  //   </Button>
+  // }
   return <Stack>
     <Box>{state}</Box>
     <Button onClick={() => { onPress() }}>
