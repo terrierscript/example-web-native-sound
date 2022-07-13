@@ -17,4 +17,7 @@ export const AudioProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
   </AudioCtx.Provider>
 }
 
-export const useAudioContext = () => useContext(AudioCtx)
+export const useAudioContext = () => {
+  const ctx = useContext(AudioCtx)
+  return ctx
+}

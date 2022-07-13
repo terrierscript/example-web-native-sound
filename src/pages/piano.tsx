@@ -23,7 +23,6 @@ const SoundButton = () => {
   const [state, setState] = useState("none")
   const audioCtx = useAudioContext()
 
-  console.log(audioCtx)
   useEffect(() => {
     if (!audioCtx) {
       return
@@ -33,6 +32,7 @@ const SoundButton = () => {
     }
     audioCtx.addEventListener("statechange", listener)
     return () => {
+      console.log("remove")
       audioCtx.removeEventListener("statechange", listener)
     }
   }, [audioCtx])
@@ -43,7 +43,10 @@ const SoundButton = () => {
   }
 
   const onPress = () => {
-    const audioCtx = new window.AudioContext()
+    // const audioCtx = new window.AudioContext()
+    if (!audioCtx) {
+      return
+    }
 
     const oscillator = audioCtx.createOscillator()
     oscillator.type = 'triangle'
@@ -54,11 +57,11 @@ const SoundButton = () => {
     oscillator.start(audioCtx.currentTime)
     oscillator.stop(audioCtx.currentTime + 0.2)
   }
-  // if (!ready) {
-  //   return <Button onClick={() => onSetup()}>
-  //     Setup
-  //   </Button>
-  // }
+  if (!ready) {
+    return <Button onClick={() => onSetup()}>
+      Setup
+    </Button>
+  }
   return <Stack>
     <Box>{state}</Box>
     <Button onClick={() => { onPress() }} colorScheme={"teal"}>
