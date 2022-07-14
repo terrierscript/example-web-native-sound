@@ -74,7 +74,10 @@ const Key: FC<{ scale: number, keyCode: string }> = ({ scale, keyCode }) => {
   return <Box>
     <Button
       colorScheme={play ? "blue" : "green"}
-      onMouseDown={() => start()} onMouseUp={() => stop()} onMouseLeave={() => stop()}>
+      onMouseDown={() => start()}
+      onMouseUp={() => stop()}
+      onMouseLeave={() => stop()}
+    >
       {keyCode}
     </Button>
   </Box>
