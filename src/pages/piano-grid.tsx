@@ -100,7 +100,8 @@ const Key: FC<{ scale: number, keyCode: string } & any> = ({ scale, keyCode, ...
     onMouseLeave={() => stop()}
     focus={play}
     {...rest}
-  >({keyCode})</Area>
+    p={4}
+  >{keyCode}</Area>
 
 }
 
@@ -134,7 +135,7 @@ const Piano = () => {
           return (
             <Key
               key={area}
-              keyCode={scale?.[0]}
+              keyCode={x !== "r" && scale?.[0]}
               scale={scale?.[1]}
               area={area}
               {...extra(x)}

@@ -31,8 +31,8 @@ const scales = [
 ] as [string, number][]
 
 const Key: FC<{ scale: number, keyCode: string }> = ({ scale, keyCode }) => {
-  const [play, setPlay] = useState(false)
   const audioCtx = useAudioContext()
+  const [play, setPlay] = useState(false)
   const oscillatorRef = useRef<OscillatorNode>()
   const start = () => {
     if (!audioCtx || oscillatorRef.current) {
