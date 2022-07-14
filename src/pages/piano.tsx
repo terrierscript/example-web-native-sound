@@ -28,7 +28,7 @@ const scales = [
   ["h", 879.99],//ラ	
   ["j", 987.75],//シ	
   ["k", 1046.5],//ド	 
-]
+] as [string, number][]
 
 const Key: FC<{ scale: number, keyCode: string }> = ({ scale, keyCode }) => {
   const [play, setPlay] = useState(false)
@@ -79,6 +79,7 @@ const Key: FC<{ scale: number, keyCode: string }> = ({ scale, keyCode }) => {
     </Button>
   </Box>
 }
+
 const SoundButton = () => {
   const [ready, setReady] = useState(false)
   const [state, setState] = useState("none")
