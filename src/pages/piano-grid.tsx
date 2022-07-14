@@ -61,7 +61,7 @@ const Key: FC<{ scale: number, keyCode: string } & any> = ({ scale, keyCode, ...
       return
     }
     const oscillator = audioCtx.createOscillator()
-    oscillator.type = 'triangle'
+    oscillator.type = 'sine'
     oscillator.frequency.setValueAtTime(scale, audioCtx.currentTime)
     oscillator.connect(audioCtx.destination)
     oscillatorRef.current = oscillator

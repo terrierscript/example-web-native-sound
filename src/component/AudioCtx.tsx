@@ -3,7 +3,6 @@ import { createContext, FC, PropsWithChildren, useContext, useMemo } from "react
 
 const AudioCtx = createContext<AudioContext | null>(null)
 
-
 export const AudioProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
   const audioCtx = useMemo(() => {
     if (typeof window === "undefined") {
