@@ -21,3 +21,21 @@ export const useAudioContext = () => {
   const ctx = useContext(AudioCtx)
   return ctx
 }
+
+export const useReadySound = () => {
+  const playReadySound = (onPlayEnd: () => void) => {
+    const audioCtx = new window.AudioContext()
+    const oscillator = audioCtx.createOscillator()
+    oscillator.type = 'triangle'
+    oscillator.frequency.setValueAtTime(10, audioCtx.currentTime)
+    oscillator.connect(audioCtx.destination)
+
+    oscillator.onended = () => {
+      onPlayEnd()
+    }
+    oscillator.start(0)
+    oscillator.stop(0.001)
+
+  }
+  return playReadySound
+}
