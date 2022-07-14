@@ -1,13 +1,6 @@
-import React, { createContext, FC, useContext, useEffect, useMemo, useRef, useState } from "react"
-// import { render } from "react-dom"
-// import { Synth } from "tone"
-import styled from "@emotion/styled"
+import React, { FC, useEffect, useMemo, useRef, useState } from "react"
 import { Box, BoxProps, Button, Center, Grid } from "@chakra-ui/react"
 import { AudioProvider, useAudioContext, useReadySound } from "../component/AudioCtx"
-
-// const ToneContext = createContext({
-//   synth: new Synth().toMaster()
-// })
 
 const area = `
   "ccr ddb ddb ddr eeb eeb eer ffr ggb ggb ggr aab aab aar bbb bbb bbr"
@@ -56,7 +49,6 @@ const scales: ScaleMap = {
   "gg": ["g", 783.98],//ソ
   "aa": ["h", 879.99],//ラ
   "bb": ["j", 987.75],//シ
-  // "": ["k", 1046.5],//ド 
 }
 
 
@@ -139,8 +131,6 @@ const Piano = () => {
             ? blackScales[key]
             : scales[key]
 
-          console.log(scale, area)
-          // const note = getNote(key, x)
           return (
             <Key
               key={area}
@@ -148,9 +138,6 @@ const Piano = () => {
               scale={scale?.[1]}
               area={area}
               {...extra(x)}
-            // onClick={() => {
-            //   synth.triggerAttackRelease(note, "8n")
-            // }}
             />
           )
         })
