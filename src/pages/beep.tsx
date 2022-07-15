@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { Box, Button, Center, Stack } from '@chakra-ui/react'
+import { Box, Button, Center, HStack, Stack } from '@chakra-ui/react'
 import React, { FC, PropsWithChildren, useEffect, useState } from 'react'
 import { useAudioContext } from '../component/AudioCtx'
 
@@ -98,9 +98,10 @@ export default function Home() {
       <Box>
         <Center flex={1} p={10}>
           <SoundReady>
-
-            <SoundButton1 />
-            <SoundButton2 />
+            <HStack>
+              <SoundButton1 />
+              <SoundButton2 />
+            </HStack>
           </SoundReady>
         </Center>
       </Box>
