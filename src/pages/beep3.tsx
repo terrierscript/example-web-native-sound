@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import { Box, Button, Center, HStack, Stack } from '@chakra-ui/react'
-import React, { FC, PropsWithChildren, useState } from 'react'
+import React, { FC, PropsWithChildren, useEffect, useRef, useState } from 'react'
 
 const SoundReady: FC<PropsWithChildren<{}>> = ({ children }) => {
   const [ready, setReady] = useState(false)
@@ -40,11 +40,12 @@ const SoundButton1 = () => {
 
     const oscillator = audioCtx.createOscillator()
     oscillator.type = 'sine'
-    oscillator.frequency.setValueAtTime(1200, audioCtx.currentTime)
-    oscillator.frequency.setValueAtTime(800, audioCtx.currentTime + 0.1)
+    oscillator.frequency.setValueAtTime(1300, audioCtx.currentTime)
+
+    oscillator.detune.setValueAtTime(900, audioCtx.currentTime + 0.2)
     oscillator.connect(audioCtx.destination)
     oscillator.start(audioCtx.currentTime)
-    oscillator.stop(audioCtx.currentTime + 0.2)
+    oscillator.stop(audioCtx.currentTime + 0.4)
   }
   return <Stack>
     <Button onClick={() => { onPress() }} colorScheme={"teal"}>
@@ -54,33 +55,40 @@ const SoundButton1 = () => {
 
 }
 
-const SoundButton2 = () => {
-  // pi pi
-  const onPress = () => {
-    const audioCtx = new window.AudioContext()
-
-    const nodes = [
-      audioCtx.createOscillator(),
-      audioCtx.createOscillator()
-    ]
-    const hz = 1700
-    nodes.map(node => {
-      node.type = 'sine'
-      node.frequency.setValueAtTime(hz, audioCtx.currentTime)
-      node.connect(audioCtx.destination)
-    })
-
-    const length = 0.1
-    const rest = 0.025
-    nodes[0].start(audioCtx.currentTime)
-    nodes[0].stop(audioCtx.currentTime + length)
-    nodes[1].start(audioCtx.currentTime + length + rest)
-    nodes[1].stop(audioCtx.currentTime + length * 2 + rest)
+const SoundBoo = () => {
+  const audioCtxRef = useRef<AudioContext>()
+  const oscillatorRef = useRef<OscillatorNode>()
+  useEffect(() => {
+    audioCtxRef.current = new AudioContext()
+  }, [])
+  const start = () => {
+    if (!audioCtxRef.current || oscillatorRef.current) {
+      return
+    }
+    const audioCtx = audioCtxRef.current
+    const oscillator = audioCtx.createOscillator()
+    oscillator.type = 'sawtooth'
+    oscillator.frequency.setValueAtTime(100, audioCtx.currentTime)
+    oscillator.connect(audioCtx.destination)
+    oscillatorRef.current = oscillator
+    oscillator.start(audioCtx.currentTime)
+  }
+  const stop = () => {
+    if (!audioCtxRef.current) {
+      return
+    }
+    oscillatorRef.current?.stop(audioCtxRef.current.currentTime)
+    oscillatorRef.current?.disconnect()
+    oscillatorRef.current = undefined
   }
 
   return <Stack>
-    <Button onClick={() => { onPress() }} colorScheme={"teal"}>
-      ピピッ
+    <Button
+      onMouseDown={() => start()}
+      onMouseUp={() => stop()}
+      onMouseOut={() => stop()}
+      colorScheme={"red"} variant="outline">
+      ブー ❌
     </Button>
   </Stack>
 }
@@ -97,7 +105,7 @@ export default function Home() {
           <SoundReady>
             <HStack>
               <SoundButton1 />
-              <SoundButton2 />
+              <SoundBoo />
             </HStack>
           </SoundReady>
         </Center>
