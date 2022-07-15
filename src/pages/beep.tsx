@@ -1,53 +1,89 @@
 import Head from 'next/head'
 import { Box, Button, Center, Stack } from '@chakra-ui/react'
-import React, { useEffect, useState } from 'react'
+import React, { FC, PropsWithChildren, useEffect, useState } from 'react'
 import { useAudioContext } from '../component/AudioCtx'
 
 
-const playReadySound = (onPlayEnd: () => void) => {
-  const audioCtx = new window.AudioContext()
-  const oscillator = audioCtx.createOscillator()
-  oscillator.type = 'triangle'
-  oscillator.frequency.setValueAtTime(10, audioCtx.currentTime)
-  oscillator.connect(audioCtx.destination)
-
-  oscillator.onended = () => {
-    onPlayEnd()
-  }
-  oscillator.start(0)
-  oscillator.stop(0.001)
-
-}
-const SoundButton = () => {
+const SoundReady: FC<PropsWithChildren<{}>> = ({ children }) => {
   const [ready, setReady] = useState(false)
-  const [state, setState] = useState("none")
+  const playReadySound = (onPlayEnd: () => void) => {
+    const audioCtx = new window.AudioContext()
+    const oscillator = audioCtx.createOscillator()
+    oscillator.type = 'triangle'
+    oscillator.frequency.setValueAtTime(10, audioCtx.currentTime)
+    oscillator.connect(audioCtx.destination)
+
+    oscillator.onended = () => {
+      onPlayEnd()
+    }
+    oscillator.start(0)
+    oscillator.stop(0)
+  }
+
 
   const onSetup = () => {
     playReadySound(() => {
       setReady(true)
     })
   }
+
+  if (!ready) {
+    return <Button onClick={() => onSetup()}>
+      Setup
+    </Button>
+  }
+
+  return <>{children}</>
+}
+
+const SoundButton1 = () => {
+  // pi po
   const onPress = () => {
     const audioCtx = new window.AudioContext()
 
     const oscillator = audioCtx.createOscillator()
-    oscillator.type = 'triangle'
+    oscillator.type = 'sine'
     oscillator.frequency.setValueAtTime(1200, audioCtx.currentTime)
     oscillator.frequency.setValueAtTime(800, audioCtx.currentTime + 0.1)
     oscillator.connect(audioCtx.destination)
-
     oscillator.start(audioCtx.currentTime)
     oscillator.stop(audioCtx.currentTime + 0.2)
   }
-  // if (!ready) {
-  //   return <Button onClick={() => onSetup()}>
-  //     Setup
-  //   </Button>
-  // }
   return <Stack>
-    <Box>{state}</Box>
     <Button onClick={() => { onPress() }} colorScheme={"teal"}>
-      beep
+      ピポッ
+    </Button>
+  </Stack>
+
+}
+
+const SoundButton2 = () => {
+  // pi pi
+  const onPress = () => {
+    const audioCtx = new window.AudioContext()
+
+    const nodes = [
+      audioCtx.createOscillator(),
+      audioCtx.createOscillator()
+    ]
+    const hz = 1700
+    nodes.map(node => {
+      node.type = 'sine'
+      node.frequency.setValueAtTime(hz, audioCtx.currentTime)
+      node.connect(audioCtx.destination)
+    })
+
+    const length = 0.1
+    const rest = 0.025
+    nodes[0].start(audioCtx.currentTime)
+    nodes[0].stop(audioCtx.currentTime + length)
+    nodes[1].start(audioCtx.currentTime + length + rest)
+    nodes[1].stop(audioCtx.currentTime + length * 2 + rest)
+  }
+
+  return <Stack>
+    <Button onClick={() => { onPress() }} colorScheme={"teal"}>
+      ピピッ
     </Button>
   </Stack>
 }
@@ -61,7 +97,11 @@ export default function Home() {
       </Head>
       <Box>
         <Center flex={1} p={10}>
-          <SoundButton />
+          <SoundReady>
+
+            <SoundButton1 />
+            <SoundButton2 />
+          </SoundReady>
         </Center>
       </Box>
     </Box>
